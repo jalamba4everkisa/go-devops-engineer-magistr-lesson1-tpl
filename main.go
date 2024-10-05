@@ -10,32 +10,38 @@ import (
 )
 
 func main() {
+	var checkbox = 0
 	response, err := http.Get("http://srv.msk01.gigacorp.local")
 	if err != nil {
 		fmt.Println(err)
 	}
-	if response.StatusCode == 200 {
-		body, err := io.ReadAll(response.Body)
-		defer response.Body.Close()
+	if response.StatusCode != 200 {
+		checkbox += 1
+	}
+	body, err := io.ReadAll(response.Body)
+	defer response.Body.Close()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	bodyStrings := strings.Split(string(body), ",")
+	bodyInt := []int{}
+	for _, i := range bodyStrings {
+		j, err := strconv.Atoi(strings.Trim(i, " "))
 		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		bodyStrings := strings.Split(string(body), ",")
-		bodyInt := []int{}
-		for _, i := range bodyStrings {
-			j, err := strconv.Atoi(strings.Trim(i, " "))
-			if err != nil {
-				panic(err)
-			}
+			bodyInt = append(bodyInt, 0)
+			checkbox += 1
+		} else {
 			bodyInt = append(bodyInt, j)
 		}
+	}
+	if checkbox > 3 {
+		fmt.Println("Unable to fetch server statistic")
+	} else {
 		fmt.Println(memoryUsage(bodyInt[2], bodyInt[1]))
 		fmt.Println(diskUsage(bodyInt[4], bodyInt[3]))
 		fmt.Println(loadAverage(bodyInt[0]))
 		fmt.Println(networkUsage(bodyInt[6], bodyInt[5]))
-	} else {
-		fmt.Println("Unable to fetch server statistic")
 	}
 }
 
