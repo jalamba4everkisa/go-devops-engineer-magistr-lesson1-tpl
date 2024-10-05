@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -29,9 +30,9 @@ func main() {
 			}
 			bodyInt = append(bodyInt, j)
 		}
-		fmt.Println(loadAverage(bodyInt[0]))
 		fmt.Println(memoryUsage(bodyInt[2], bodyInt[1]))
 		fmt.Println(diskUsage(bodyInt[4], bodyInt[3]))
+		fmt.Println(loadAverage(bodyInt[0]))
 		fmt.Println(networkUsage(bodyInt[6], bodyInt[5]))
 	} else {
 		fmt.Println("Unable to fetch server statistic")
@@ -47,10 +48,10 @@ func loadAverage(la int) string {
 }
 
 func memoryUsage(part, total int) string {
-	p := float32(part)
-	t := float32(total)
+	p := float64(part)
+	t := float64(total)
 	temp := p / t * 100
-	result := fmt.Sprintf("%.3f", temp)
+	result := fmt.Sprintf("%.f", math.RoundToEven(temp))
 	if temp > 80.0 {
 		result = "Memory usage too high: " + result
 	}
@@ -58,25 +59,25 @@ func memoryUsage(part, total int) string {
 }
 
 func diskUsage(part, total int) string {
-	p := float32(part)
-	t := float32(total)
+	p := float64(part)
+	t := float64(total)
 	temp := p / t * 100
-	result := fmt.Sprintf("%.3f", temp)
+	result := fmt.Sprintf("%.f", math.RoundToEven(temp))
 	if temp > 90.0 {
 		space := (t - p) / 1024
-		result = "Free disk space is too low: " + fmt.Sprintf("%.3f", space) + " Mb left"
+		result = "Free disk space is too low: " + fmt.Sprintf("%.f", space) + " Mb left"
 	}
 	return result
 }
 
 func networkUsage(part, total int) string {
-	p := float32(part) * 8
-	t := float32(total) * 8
+	p := float64(part) * 8
+	t := float64(total) * 8
 	temp := p / t * 100
-	result := fmt.Sprintf("%.3f", temp)
+	result := fmt.Sprintf("%.f", math.RoundToEven(temp))
 	if temp > 90.0 {
 		space := (t - p) / 1024
-		result = "Network bandwidth usage high: " + fmt.Sprintf("%.3f", space) + " Mbit/s available"
+		result = "Network bandwidth usage high: " + fmt.Sprintf("%.f", space) + " Mbit/s available"
 	}
 	return result
 }
