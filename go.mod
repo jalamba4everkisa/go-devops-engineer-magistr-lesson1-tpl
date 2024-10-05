@@ -1,3 +1,3 @@
 module github.com/jalamba4everkisa/go-devops-engineer-magistr-lesson1-tpl
 
-go 1.23.2
+go 1.22
