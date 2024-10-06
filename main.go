@@ -45,12 +45,12 @@ func main() {
 		if checkbox > 2 {
 			fmt.Println("Unable to fetch server statistic")
 		} else {
+			check(loadAverage(bodyInt[0]))
 			check(memoryUsage(bodyInt[2], bodyInt[1]))
 			check(diskUsage(bodyInt[4], bodyInt[3]))
-			check(loadAverage(bodyInt[0]))
 			check(networkUsage(bodyInt[6], bodyInt[5]))
 		}
-		time.Sleep(15 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
 
 }
@@ -92,7 +92,7 @@ func networkUsage(part, total int) string {
 	result := ""
 	usagePercent := percent.PercentOf(part, total)
 	if usagePercent > 90 {
-		diff := float64(total-part) / 125000
+		diff := float64(total-part) / 125000 / 8
 		result = "Network bandwidth usage high: " + fmt.Sprintf("%.f", diff) + " Mbit/s available"
 	} else {
 		result = ""
