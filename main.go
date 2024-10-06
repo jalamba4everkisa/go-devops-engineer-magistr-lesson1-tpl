@@ -80,7 +80,7 @@ func diskUsage(part, total int) string {
 	result := ""
 	usagePercent := percent.PercentOf(part, total)
 	if usagePercent > 90 {
-		diff := float64(total-part) / 1048576
+		diff := math.Trunc(float64(total-part) / 1048576)
 		result = "Free disk space is too low: " + fmt.Sprintf("%.f", diff) + " Mb left"
 	} else {
 		result = ""
@@ -92,7 +92,7 @@ func networkUsage(part, total int) string {
 	result := ""
 	usagePercent := percent.PercentOf(part, total)
 	if usagePercent > 90 {
-		diff := float64(total-part) / 125000 / 8
+		diff := math.Trunc(float64(total-part) / 125000 / 8)
 		result = "Network bandwidth usage high: " + fmt.Sprintf("%.f", diff) + " Mbit/s available"
 	} else {
 		result = ""
